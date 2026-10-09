@@ -1,61 +1,81 @@
 import React, { useState } from 'react';
+import { motion } from 'motion/react';
 import { ProjectItem } from '../types';
-import { ArrowUpRight, Sparkles, Terminal } from 'lucide-react';
+import { ArrowUpRight } from 'lucide-react';
+import {
+  Tilt3D,
+  TextEffect,
+  TextScramble,
+  Magnetic,
+  Scroll3DSection,
+} from './ui/MotionPrimitives';
 
 interface ProjectsSectionProps {
   projects: ProjectItem[];
   onOpenProject: (project: ProjectItem) => void;
 }
 
-export const ProjectsSection: React.FC<ProjectsSectionProps> = ({ projects, onOpenProject }) => {
+export const ProjectsSection: React.FC<ProjectsSectionProps> = ({
+  projects,
+  onOpenProject,
+}) => {
   const [filter, setFilter] = useState<string>('all');
 
-  const categories = ['all', ...Array.from(new Set(projects.map((p) => p.category)))];
+  const categories = [
+    'all',
+    ...Array.from(new Set(projects.map((p) => p.category))),
+  ];
 
   const filteredProjects =
     filter === 'all'
       ? projects
-      : projects.filter((p) => p.category.toLowerCase() === filter.toLowerCase());
+      : projects.filter(
+          (p) => p.category.toLowerCase() === filter.toLowerCase()
+        );
 
   return (
-    <section id="projects" className="relative py-28 md:py-36 px-6 md:px-10 border-t border-white/[0.06]">
+    <Scroll3DSection
+      id="projects"
+      className="py-28 md:py-36 px-6 md:px-10 border-t border-white/[0.07]"
+    >
       <div className="max-w-7xl mx-auto">
-        {/* Category Header with Animated Category Index */}
-        <div className="flex items-baseline justify-between mb-16 pb-6 border-b border-white/[0.08]">
-          <div className="flex items-center gap-4">
-            <span className="text-4xl md:text-5xl font-mono font-bold text-transparent bg-clip-text bg-gradient-to-r from-violet-400 to-[#7042f8]">
-              03
+        {/* Studio Mirage Editorial Section Header */}
+        <div className="flex items-baseline justify-between mb-14 pb-6 border-b border-white/[0.08]">
+          <div className="flex items-baseline gap-3">
+            <span className="text-sm font-mono text-violet-400 tabular-nums">
+              03.
             </span>
-            <div className="h-4 w-[1px] bg-white/20" />
-            <h2 className="text-sm md:text-base font-mono uppercase tracking-[0.25em] text-zinc-400">
-              PROJECTS
+            <h2 className="text-sm font-mono tracking-widest text-zinc-300 uppercase">
+              <TextScramble>Selected Works</TextScramble>
             </h2>
           </div>
-          <span className="text-xs font-mono text-zinc-500 uppercase tracking-widest hidden sm:inline">
-            Production Showcases & Architectures
+          <span className="text-xs font-mono text-zinc-400 hidden sm:inline">
+            Arise SMP · Interactive Worlds · Systems
           </span>
         </div>
 
-        {/* Header Intro and Interactive Category Filter Controls */}
+        {/* Title & Segmented Category Filter */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-16">
           <div className="max-w-2xl">
-            <h3 className="text-3xl sm:text-4xl md:text-5xl font-bold font-display text-white tracking-tight mb-4">
-              Featured Systems & Worlds
+            <h3 className="text-4xl sm:text-5xl md:text-6xl font-extrabold font-display text-white tracking-tight leading-[0.98] mb-5 text-balance">
+              <TextEffect per="word">
+                Our Works & Digital Worlds
+              </TextEffect>
             </h3>
-            <p className="text-base sm:text-lg text-zinc-400">
-              Explore bespoke digital spaces engineered by Asura Kinetics. Every release is a benchmark in community immersion and gameplay stability.
+            <p className="text-base sm:text-lg text-zinc-400 leading-relaxed">
+              From the monumental multiplayer ecosystem of Arise SMP to high-concurrency Discord infrastructures, every project is crafted for spatial immersion and zero-latency performance.
             </p>
           </div>
 
-          {/* Interactive filter tabs (clean segmented controls) */}
-          {categories.length > 2 && (
-            <div className="flex items-center gap-1.5 p-1 rounded-xl bg-white/[0.04] border border-white/[0.08] backdrop-blur-md self-start md:self-auto">
+          {/* Interactive Filter Controls */}
+          {categories.length > 1 && (
+            <div className="flex items-center gap-1 p-1 rounded-xl bg-white/[0.04] border border-white/[0.08] backdrop-blur-md self-start md:self-auto">
               {categories.map((cat) => (
                 <button
                   key={cat}
                   type="button"
                   onClick={() => setFilter(cat)}
-                  className={`px-3.5 py-1.5 text-xs font-mono uppercase tracking-wider rounded-lg transition-all duration-200 whitespace-nowrap ${
+                  className={`px-3.5 py-1.5 text-xs font-medium rounded-lg transition-colors whitespace-nowrap shrink-0 ${
                     filter === cat
                       ? 'bg-white text-zinc-950 font-semibold shadow-sm'
                       : 'text-zinc-400 hover:text-white'
@@ -68,10 +88,10 @@ export const ProjectsSection: React.FC<ProjectsSectionProps> = ({ projects, onOp
           )}
         </div>
 
-        {/* Projects Grid */}
-        <div className="space-y-12">
+        {/* 3D Interactive Case Study Showcases */}
+        <div className="space-y-14">
           {filteredProjects.map((project, index) => (
-            <ProjectCard
+            <ProjectShowcaseCard
               key={project.id}
               project={project}
               index={index}
@@ -80,129 +100,172 @@ export const ProjectsSection: React.FC<ProjectsSectionProps> = ({ projects, onOp
           ))}
         </div>
       </div>
-    </section>
+    </Scroll3DSection>
   );
 };
 
-interface ProjectCardProps {
+interface ProjectShowcaseCardProps {
   project: ProjectItem;
   index: number;
   onOpen: () => void;
 }
 
-const ProjectCard: React.FC<ProjectCardProps> = ({ project, index, onOpen }) => {
+const ProjectShowcaseCard: React.FC<ProjectShowcaseCardProps> = ({
+  project,
+  index,
+  onOpen,
+}) => {
   const isEven = index % 2 === 0;
+  const [imgError, setImgError] = useState(false);
 
   return (
-    <div className="group rounded-3xl glass-panel border border-white/[0.08] hover:border-violet-500/40 p-6 sm:p-8 md:p-10 transition-all duration-500 shadow-2xl shadow-black/50 overflow-hidden relative">
-      {/* Background Subtle Gradient Flare */}
-      <div className="absolute top-0 right-0 w-96 h-96 bg-[#7042f8]/05 rounded-full blur-3xl group-hover:bg-[#7042f8]/10 transition-colors pointer-events-none" />
-
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
-        {/* Project Visual / Media Presentation */}
-        <div
+    <Tilt3D
+      rotationFactor={6}
+      spotlightColor="rgba(112, 66, 248, 0.24)"
+      className="rounded-2xl bg-[#0b0b10]/85 border border-white/[0.08] hover:border-white/[0.2] p-6 sm:p-8 md:p-12 transition-colors duration-300"
+    >
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center relative z-20">
+        {/* Visual Media Container with 3D Depth Pop */}
+        <motion.div
+          whileHover={{ scale: 1.02, rotateZ: isEven ? -0.6 : 0.6 }}
+          transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+          onClick={onOpen}
+          data-cursor="VIEW WORK"
           className={`lg:col-span-7 ${
             isEven ? 'lg:order-1' : 'lg:order-2'
-          } relative aspect-[16/10] rounded-2xl overflow-hidden bg-zinc-900 border border-white/[0.08] cursor-pointer`}
-          onClick={onOpen}
+          } relative aspect-[16/10] rounded-xl overflow-hidden bg-zinc-900 border border-white/[0.08] cursor-pointer group/media`}
         >
-          <img
-            src={project.image}
-            alt={project.name}
-            referrerPolicy="no-referrer"
-            className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-60 group-hover:opacity-40 transition-opacity" />
+          {!imgError && project.image ? (
+            <img
+              src={project.image}
+              alt={project.name}
+              referrerPolicy="no-referrer"
+              onError={() => setImgError(true)}
+              className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover/media:scale-110"
+            />
+          ) : (
+            <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-violet-950/50 via-zinc-900 to-cyan-950/40 p-8 text-center">
+              <span className="text-2xl font-display font-bold text-white uppercase tracking-wider">
+                {project.name}
+              </span>
+            </div>
+          )}
 
-          {/* Quick Corner Tag */}
-          <div className="absolute top-4 left-4 inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-black/60 backdrop-blur-md border border-white/10 text-xs font-mono text-zinc-300">
-            <span className="w-1.5 h-1.5 rounded-full bg-violet-400 shadow-[0_0_8px_#a78bfa]" />
-            <span>{project.category}</span>
+          {/* Measured Contrast Scrim */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-transparent" />
+
+          {/* Bottom Overlay Caption */}
+          <div className="absolute bottom-4 left-5 right-5 flex items-center justify-between text-xs font-mono text-zinc-200">
+            <span>
+              {project.number || `0${index + 1}`}. {project.name}
+            </span>
+            <span className="inline-flex items-center gap-1 text-white group-hover/media:translate-x-1 transition-transform">
+              <span>Inspect Case Study</span>
+              <ArrowUpRight className="w-3.5 h-3.5" />
+            </span>
           </div>
+        </motion.div>
 
-          <div className="absolute bottom-4 right-4 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-black/70 backdrop-blur-md border border-white/10 text-xs font-mono text-zinc-300 group-hover:text-white transition-colors">
-            <span>View Architecture</span>
-            <ArrowUpRight className="w-3.5 h-3.5" />
-          </div>
-        </div>
-
-        {/* Project Details & Narrative */}
-        <div className={`lg:col-span-5 ${isEven ? 'lg:order-2' : 'lg:order-1'} flex flex-col justify-between`}>
+        {/* Editorial Case Study Details */}
+        <div
+          className={`lg:col-span-5 ${
+            isEven ? 'lg:order-2' : 'lg:order-1'
+          } flex flex-col justify-between`}
+        >
           <div>
             {/* Unboxed Metadata Line with typographic separators */}
-            <div className="flex items-center gap-2 text-xs font-mono text-zinc-400 uppercase tracking-widest mb-4">
-              <span className="text-zinc-300 font-semibold">#{project.number || '01'}</span>
+            <div className="flex flex-wrap items-center gap-2 text-xs font-mono text-zinc-400 mb-4 tabular-nums">
+              <span className="text-zinc-200 font-semibold">
+                {project.number || `0${index + 1}`}.
+              </span>
               <span aria-hidden="true">·</span>
               <span className="text-violet-400">{project.category}</span>
               <span aria-hidden="true">·</span>
               <span className="text-emerald-400">{project.status}</span>
             </div>
 
-            {/* Project Name */}
+            {/* Project Title with 3D Character Reveal + Scramble */}
             <h4
               onClick={onOpen}
-              className="text-3xl sm:text-4xl font-black font-display text-white tracking-tight mb-4 hover:text-violet-300 transition-colors cursor-pointer"
+              data-cursor="VIEW WORK"
+              className="text-3xl sm:text-4xl md:text-5xl font-extrabold font-display text-white tracking-tight mb-3 hover:text-violet-300 transition-colors cursor-pointer uppercase"
             >
-              {project.name}
+              <TextScramble triggerOnHover duration={0.5}>
+                {project.name}
+              </TextScramble>
             </h4>
 
-            {/* Project Tagline if available */}
+            {/* Tagline */}
             {project.tagline && (
-              <p className="text-sm font-medium text-zinc-300 mb-4 font-display">
+              <p className="text-base font-medium text-zinc-200 mb-4 font-display">
                 {project.tagline}
               </p>
             )}
 
             {/* Description */}
-            <p className="text-sm sm:text-base text-zinc-400 leading-relaxed mb-6 font-normal">
+            <p className="text-sm sm:text-base text-zinc-400 leading-relaxed mb-6">
               {project.description}
             </p>
 
-            {/* Key Stack & Features Preview */}
-            <div className="space-y-2 mb-8">
-              <div className="text-xs font-mono uppercase tracking-wider text-zinc-400 flex items-center gap-1.5">
-                <Terminal className="w-3.5 h-3.5 text-violet-400" />
-                <span>Technologies & Engine</span>
+            {/* Unboxed Architecture & Stack Line */}
+            {project.technologies && project.technologies.length > 0 && (
+              <div className="mb-6 pt-5 border-t border-white/[0.07]">
+                <div className="text-xs font-mono text-zinc-400 mb-2">
+                  Architecture Stack
+                </div>
+                <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1 text-xs font-mono text-zinc-200">
+                  {project.technologies.map((tech, idx) => (
+                    <React.Fragment key={idx}>
+                      {idx > 0 && (
+                        <span className="text-zinc-600" aria-hidden="true">
+                          ·
+                        </span>
+                      )}
+                      <span>{tech}</span>
+                    </React.Fragment>
+                  ))}
+                </div>
               </div>
-              <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5 text-xs text-zinc-300 font-mono">
-                {project.technologies.slice(0, 4).map((tech, idx) => (
+            )}
+
+            {/* Unboxed Tags Line */}
+            {project.tags && project.tags.length > 0 && (
+              <div className="flex flex-wrap items-center gap-2 text-xs font-mono text-zinc-400 mb-8">
+                <span>Disciplines:</span>
+                {project.tags.map((tag, idx) => (
                   <React.Fragment key={idx}>
-                    {idx > 0 && <span className="text-zinc-600">·</span>}
-                    <span>{tech}</span>
+                    {idx > 0 && (
+                      <span className="text-zinc-600" aria-hidden="true">
+                        /
+                      </span>
+                    )}
+                    <span className="text-zinc-300">{tag}</span>
                   </React.Fragment>
                 ))}
               </div>
-            </div>
-
-            {/* Project Tags (Unboxed text with typographic separators) */}
-            <div className="flex flex-wrap items-center gap-2 text-xs text-zinc-400 font-mono mb-8">
-              <span className="text-zinc-400">Tags:</span>
-              {project.tags.map((tag, idx) => (
-                <React.Fragment key={idx}>
-                  {idx > 0 && <span className="text-zinc-700">/</span>}
-                  <span className="text-zinc-300">{tag}</span>
-                </React.Fragment>
-              ))}
-            </div>
+            )}
           </div>
 
           {/* Action Row */}
-          <div className="pt-6 border-t border-white/[0.08] flex items-center justify-between">
-            <button
-              type="button"
-              onClick={onOpen}
-              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-white text-zinc-950 hover:bg-zinc-200 text-xs font-semibold uppercase tracking-wider transition-all duration-200 shadow-md active:scale-95"
-            >
-              <span>View Project</span>
-              <ArrowUpRight className="w-3.5 h-3.5" />
-            </button>
+          <div className="pt-6 border-t border-white/[0.08] flex items-center justify-between gap-4">
+            <Magnetic intensity={0.3}>
+              <button
+                type="button"
+                onClick={onOpen}
+                data-cursor="OPEN"
+                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-white text-zinc-950 hover:bg-zinc-200 text-xs font-semibold transition-colors whitespace-nowrap"
+              >
+                <span>Explore Case Study</span>
+                <ArrowUpRight className="w-3.5 h-3.5" />
+              </button>
+            </Magnetic>
 
             <span className="text-xs font-mono text-zinc-400 hidden sm:inline">
-              Exclusive Asura Build
+              Asura Kinetics Production
             </span>
           </div>
         </div>
       </div>
-    </div>
+    </Tilt3D>
   );
 };

@@ -134,13 +134,12 @@ export function verifyPassword(password: string, salt: string, storedHash: strin
 // Initial default seed state
 function getDefaultDatabase(): DatabaseSchema {
   const defaultSalt = generateSalt();
-  // Default login requested: Asura / adminAsura
-  const defaultHash = hashPassword('adminAsura', defaultSalt);
+  const defaultHash = hashPassword('Kinetics#8392!xR', defaultSalt);
 
   return {
     adminUser: {
       id: 'admin_1',
-      username: 'Asura',
+      username: 'AK-Admin-9482',
       salt: defaultSalt,
       passwordHash: defaultHash,
       updatedAt: new Date().toISOString(),
@@ -379,8 +378,12 @@ class DatabaseManager {
   private db: DatabaseSchema;
 
   constructor() {
-    if (!fs.existsSync(DATA_DIR)) {
-      fs.mkdirSync(DATA_DIR, { recursive: true });
+    try {
+      if (!fs.existsSync(DATA_DIR)) {
+        fs.mkdirSync(DATA_DIR, { recursive: true });
+      }
+    } catch {
+      // Read-only filesystem (e.g., Vercel / Serverless) — operate in-memory
     }
 
     if (fs.existsSync(DB_PATH)) {

@@ -17,6 +17,11 @@ import { Footer } from './components/Footer';
 import { ProjectModal } from './components/ProjectModal';
 import { AdminLogin } from './components/admin/AdminLogin';
 import { AdminDashboard } from './components/admin/AdminDashboard';
+import {
+  MirageCursor,
+  MiragePreloader,
+  ScrollProgressBeam,
+} from './components/ui/MotionPrimitives';
 import { RefreshCw } from 'lucide-react';
 
 export default function App() {
@@ -195,7 +200,16 @@ export default function App() {
   }
 
   return (
-    <div className="relative min-h-screen bg-[#070709] text-white selection:bg-[#7042f8]/40 selection:text-white">
+    <div className="relative min-h-screen bg-[#050507] text-white selection:bg-[#7042f8]/40 selection:text-white">
+      {/* Studio Mirage Kinetic Preloader Curtain */}
+      <MiragePreloader />
+
+      {/* Top Scroll Progress Beam */}
+      <ScrollProgressBeam />
+
+      {/* Studio Mirage Interactive Spatial Cursor */}
+      <MirageCursor />
+
       {/* Background Interactive Ambient Canvas & Atmosphere */}
       <BackgroundEffects />
 
